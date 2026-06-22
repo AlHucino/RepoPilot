@@ -146,7 +146,7 @@ async def launch_react_tui(
             raise RuntimeError("Failed to install React terminal frontend dependencies")
 
     env = os.environ.copy()
-    env["OPENHARNESS_FRONTEND_CONFIG"] = json.dumps(
+    env["REPOPILOT_FRONTEND_CONFIG"] = json.dumps(
         {
             "backend_command": build_backend_command(
                 cwd=cwd or str(Path.cwd()),

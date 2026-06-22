@@ -26,12 +26,12 @@ htmlcov/
 
 # React TUI frontend
 frontend/terminal/node_modules/
-agentops-dashboard/node_modules/
-agentops-dashboard/dist/
+repopilot-dashboard/node_modules/
+repopilot-dashboard/dist/
 
 # User data (never commit API keys or session data)
 .openharness/
-.repotrace/
+.repopilot/
 react_tui_smoke.txt
 
 # OS

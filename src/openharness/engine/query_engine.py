@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import AsyncIterator
 
 from openharness.api.client import SupportsStreamingMessages
-from openharness.agentops.trace import TraceRecorder
+from openharness.runlog.trace import TraceRecorder
 from openharness.engine.cost_tracker import CostTracker
 from openharness.coordinator.coordinator_mode import get_coordinator_user_context
 from openharness.engine.messages import ConversationMessage, TextBlock, ToolResultBlock, sanitize_conversation_messages

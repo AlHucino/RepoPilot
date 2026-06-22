@@ -1,19 +1,19 @@
 # Architecture
 
-RepoTrace adds an AgentOps layer on top of the existing agent runtime.
+RepoPilot is organized around a model-tool runtime plus a durable run timeline.
 
 ## Runtime Flow
 
 1. A user request enters `QueryEngine`.
 2. `QueryEngine` starts a `TraceRecorder` with a durable `run_id`.
-3. The model loop emits stream events for assistant text, tool calls, tool results, errors, and compact progress.
-4. RepoTrace serializes those events into `.repotrace/traces/run-<id>.jsonl`.
+3. The model loop emits stream events for assistant turns, tool calls, tool results, errors, and compact progress.
+4. RepoPilot serializes those events into `.repopilot/traces/run-<id>.jsonl`.
 5. Tool execution records permission decisions before side effects run.
-6. CLI, eval suites, exports, and dashboard snapshots read from the trace store.
+6. CLI commands, eval suites, exports, and dashboard snapshots read from the same trace store.
 
-## Why The Trace Layer Exists
+## Why The Run Timeline Exists
 
-The base runtime already had UI events and session snapshots, but those are optimized for rendering and resume. RepoTrace turns the same execution facts into an audit and evaluation product:
+Agent failures are usually scattered across model text, tool arguments, file changes, permission prompts, retries, context compaction, and final answers. RepoPilot turns those runtime facts into inspectable project data:
 
 - queryable run history
 - reproducible Markdown/JSON exports

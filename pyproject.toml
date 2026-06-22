@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "repotrace-agentops"
+name = "repopilot-agent"
 version = "0.2.0"
-description = "Local AgentOps tracing, permission audit, and eval scorecards for software-engineering agents"
+description = "AI coding agent runtime for repository tasks"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "RepoTrace Contributors" },
+    { name = "RepoPilot Contributors" },
 ]
 
 dependencies = [
@@ -46,10 +46,10 @@ dev = [
 ]
 
 [project.scripts]
-repotrace = "repotrace.cli:app"
+repopilot = "repopilot.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/repotrace", "src/openharness", "ohmo"]
+packages = ["src/repopilot", "src/openharness"]
 
 [tool.hatch.build]
 exclude = [
@@ -57,6 +57,7 @@ exclude = [
     "/.venv",
     "/.openharness-venv",
     "/.openharness",
+    "/.repopilot",
     "/.pytest_cache",
     "/.mypy_cache",
     "/.ruff_cache",

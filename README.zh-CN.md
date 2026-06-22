@@ -1,29 +1,39 @@
-# RepoTrace AgentOps 中文说明
+# RepoPilot 中文说明
 
-RepoTrace AgentOps 是一个面向软件工程 Agent 的本地可观测、权限审计与评测平台。
+**面向代码仓库任务的 AI Coding Agent**
 
-项目重点不是再做一个聊天式 coding agent，而是补齐 Agent 工程化里最容易被忽略的一层：一次 agent run 到底调用了哪些工具、为什么被允许或阻止、哪里失败、消耗多少 token、是否发生上下文压缩，以及这些信息能不能被复盘和评测。
+RepoPilot 是一个本地代码仓库 Agent 项目，围绕“理解代码、调用工具、修改文件、运行检查、保留上下文、复盘执行过程”这一整条链路设计。
+
+它不是单纯的聊天 demo。项目重点在于把 coding agent 做成一个可解释、可审计、可验证的工程系统：模型如何决定调用工具、工具执行前如何过权限、失败如何定位、一次任务的耗时和 token 如何统计，都能通过结构化运行记录复盘。
 
 ## 核心能力
 
-- 每次运行生成 `.repotrace/traces/run-*.jsonl`
-- 记录 assistant turn、tool call、tool result、error、compact event
-- 记录 permission decision、风险类别、路径/命令摘要
-- 提供 `repotrace trace list/show/export`
-- 提供 deterministic local eval 和 SWE-bench smoke adapter
-- 提供 AgentOps dashboard 展示 timeline、风险审计和 eval scorecard
+- 面向 repository task 的工具调用 Agent loop
+- 支持多模型/provider 配置
+- 支持文件、shell、搜索、web、MCP、任务与记忆相关工具
+- 高风险工具执行前进行权限判断
+- 每次运行生成 `.repopilot/traces/run-*.jsonl`
+- 支持 `repopilot trace list/show/export`
+- 支持 deterministic local eval 和 SWE-bench smoke adapter
+- Dashboard 展示 timeline、tool failure、permission audit 和 eval scorecard
 
 ## 快速体验
 
 ```bash
 uv sync --extra dev
-uv run repotrace eval run --suite local
-uv run repotrace trace list
-uv run repotrace trace export <run_id>
+uv run repopilot eval run --suite local
+uv run repopilot trace list
+uv run repopilot trace export <run_id>
 ```
 
-## 面试叙事
+Dashboard:
 
-可以把 RepoTrace 讲成：我把一个通用 Agent runtime 改造成了可复盘、可度量、可治理的 AgentOps 平台。原 runtime 只有 UI 事件和会话恢复记录，我在执行链路上新增了持久化 trace store、权限审计、风险分类和 eval scorecard，使工具调用失败、权限拒绝、成本和上下文压缩都能被结构化追踪。
+```bash
+cd repopilot-dashboard
+npm ci
+npm run dev
+```
 
-详见 [docs/INTERVIEW_GUIDE_ZH.md](docs/INTERVIEW_GUIDE_ZH.md)。
+## 设计目标
+
+RepoPilot 的目标是把一次 coding-agent 任务从“模型输出 + 临时终端日志”变成可复盘的工程流程。它保留工具调用、权限决策、错误、耗时和 token usage，方便开发者回看一次任务为什么成功、哪里失败，以及后续如何改进 agent 行为。

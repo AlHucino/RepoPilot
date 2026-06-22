@@ -1,30 +1,25 @@
-# Contributing to RepoTrace AgentOps
+# Contributing to RepoPilot
 
-RepoTrace is focused on local AgentOps capabilities for software-engineering agents.
-
-Good contributions improve one of these areas:
-
-- trace completeness
-- permission audit quality
-- deterministic eval coverage
-- scorecard clarity
-- dashboard readability
-- documentation that explains real engineering tradeoffs
+RepoPilot is focused on repository-task coding-agent workflows: tool orchestration, permission boundaries, run timelines, eval scorecards, and a dashboard for reviewing agent behavior.
 
 ## Development
 
 ```bash
 uv sync --extra dev
-uv run pytest -q tests/test_agentops tests/test_engine tests/test_permissions
+uv run pytest -q tests/test_runlog tests/test_engine tests/test_permissions
 uv run ruff check src tests scripts
 ```
 
 Dashboard:
 
 ```bash
-cd agentops-dashboard
+cd repopilot-dashboard
 npm ci
 npm run build
 ```
 
-Do not commit local `.repotrace/` traces or credentials.
+## Hygiene
+
+Do not commit credentials, local traces, caches, virtualenvs, or generated build output.
+
+Ignored local data includes `.repopilot/`, `.openharness/`, `.env`, `.venv/`, `node_modules/`, and `dist/`.

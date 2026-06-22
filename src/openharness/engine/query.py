@@ -39,7 +39,7 @@ from openharness.engine.stream_events import (
 )
 from openharness.hooks import HookEvent, HookExecutor
 from openharness.permissions.checker import PermissionChecker
-from openharness.agentops.trace import TraceRecorder, classify_tool_risk
+from openharness.runlog.trace import TraceRecorder, classify_tool_risk
 from openharness.services.tool_outputs import tool_output_inline_chars, tool_output_preview_chars
 from openharness.tools.base import ToolExecutionContext
 from openharness.tools.base import ToolRegistry

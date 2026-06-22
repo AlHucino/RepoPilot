@@ -1,17 +1,16 @@
 # Notice
 
-RepoTrace AgentOps is a derivative work based on the MIT-licensed OpenHarness project.
+RepoPilot is a derivative work based on the MIT-licensed OpenHarness project.
 
-The original license is preserved in `LICENSE`.
+This repository preserves the original MIT license notice and adds a separate project identity focused on repository-task coding agents.
 
-This fork adds the following project-specific work:
+Notable additions in this fork include:
 
-- durable AgentOps trace storage under `.repotrace/traces/`
-- `repotrace trace list/show/export`
-- deterministic local eval scorecards
-- SWE-bench smoke adapter metadata flow
-- permission audit events with risk classification
-- AgentOps dashboard focused on trace timelines and scorecards
-- architecture, evaluation, change, and interview packaging documentation
+- durable run timeline storage under `.repopilot/traces/`
+- `repopilot trace list/show/export`
+- deterministic local eval and SWE-bench smoke scorecards
+- permission decision and tool-risk audit records
+- RepoPilot dashboard for run review and scorecards
+- updated README, architecture notes, evaluation report, and interview guide
 
-Internal module names may keep compatibility with the upstream runtime to reduce migration risk. Public packaging and user-facing documentation are branded as RepoTrace AgentOps.
+Internal module names may keep compatibility with the upstream runtime to reduce migration risk. Public packaging and user-facing documentation are branded as RepoPilot.

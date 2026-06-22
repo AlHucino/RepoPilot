@@ -1,4 +1,4 @@
-"""Run the OpenHarness memory schema migration from a source checkout."""
+"""Run the RepoPilot memory schema migration from a source checkout."""
 
 from __future__ import annotations
 

@@ -71,7 +71,7 @@ class BackendHostConfig:
 
 
 class ReactBackendHost:
-    """Drive the OpenHarness runtime over a structured stdin/stdout protocol."""
+    """Drive the RepoPilot runtime over a structured stdin/stdout protocol."""
 
     def __init__(self, config: BackendHostConfig) -> None:
         self._config = config

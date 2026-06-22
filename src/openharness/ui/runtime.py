@@ -298,8 +298,8 @@ async def build_runtime(
     include_project_memory: bool = True,
     autodream_context: dict[str, object] | None = None,
 ) -> RuntimeBundle:
-    """Build the shared runtime for an OpenHarness session."""
-    # 学习入口：这里是 OpenHarness 的“会话装配中心”。CLI、TUI、ohmo、
+    """Build the shared runtime for an RepoPilot session."""
+    # 学习入口：这里是 RepoPilot 的“会话装配中心”。CLI、TUI、ohmo、
     # task worker 最终都会把自己的参数收敛到这里，再组装出同一套 agent runtime。
     settings_overrides: dict[str, Any] = {
         "model": model,

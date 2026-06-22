@@ -1,4 +1,4 @@
-"""Default Textual terminal UI for OpenHarness."""
+"""Default Textual terminal UI for RepoPilot."""
 
 from __future__ import annotations
 
@@ -135,7 +135,7 @@ class QuestionScreen(ModalScreen[str]):
         self.dismiss("")
 
 
-class OpenHarnessTerminalApp(App[None]):
+class RepoPilotTerminalApp(App[None]):
     """Terminal-first Textual UI."""
 
     CSS = """
@@ -238,7 +238,7 @@ class OpenHarnessTerminalApp(App[None]):
             with Vertical(id="transcript-column"):
                 yield RichLog(id="transcript", wrap=True, highlight=True, markup=True)
                 yield Static("Ready.", id="current-response")
-                yield Input(placeholder="Ask OpenHarness or enter a /command", id="composer")
+                yield Input(placeholder="Ask RepoPilot or enter a /command", id="composer")
             with Vertical(id="side-column"):
                 yield Static("Starting...", id="status-bar")
                 yield Static("No tasks yet.", id="tasks-panel")

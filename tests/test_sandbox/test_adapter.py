@@ -117,7 +117,7 @@ def test_create_shell_subprocess_preserves_exit_code_with_sandbox(monkeypatch):
             try:
                 process = await create_shell_subprocess(
                     "exit 7",
-                    cwd=Path("/home/tangjiabin/OpenHarness-new"),
+                    cwd=Path("/tmp/repopilot-project"),
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                 )

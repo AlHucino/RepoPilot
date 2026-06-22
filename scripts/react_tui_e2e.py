@@ -56,7 +56,7 @@ def _isolated_env(permission_mode: str = "full_auto") -> tuple[tempfile.Temporar
     env = os.environ.copy()
     env["OPENHARNESS_CONFIG_DIR"] = str(config_dir)
     env["OPENHARNESS_DATA_DIR"] = str(data_dir)
-    env["OPENHARNESS_FRONTEND_RAW_RETURN"] = "1"
+    env["REPOPILOT_FRONTEND_RAW_RETURN"] = "1"
     return temp_dir, env
 
 
@@ -68,7 +68,7 @@ def _run_permission_file_io() -> None:
     child = _spawn_oh(env=env)
     try:
         print("[react_tui_permission_file_io] waiting for app shell")
-        child.expect("OpenHarness")
+        child.expect("RepoPilot")
         child.expect("model: kimi-k2.5")
         _submit(
             child,
@@ -93,7 +93,7 @@ def _run_question_flow() -> None:
     temp_dir, env = _isolated_env()
     child = _spawn_oh(env=env)
     try:
-        child.expect("OpenHarness")
+        child.expect("RepoPilot")
         child.expect("model: kimi-k2.5")
         _submit(
             child,
@@ -118,7 +118,7 @@ def _run_question_flow() -> None:
 
 def _run_command_flow() -> None:
     temp_dir, env = _isolated_env()
-    env["OPENHARNESS_FRONTEND_SCRIPT"] = json.dumps(
+    env["REPOPILOT_FRONTEND_SCRIPT"] = json.dumps(
         [
             "/plan",
             "Reply with exactly FINAL_OK_REACT_TUI_COMMANDS.",
@@ -127,7 +127,7 @@ def _run_command_flow() -> None:
     child = _spawn_oh(env=env)
     try:
         print("[react_tui_command_flow] waiting for app shell")
-        child.expect("OpenHarness")
+        child.expect("RepoPilot")
         child.expect("model: kimi-k2.5")
         print("[react_tui_command_flow] waiting for plan mode indicator")
         child.expect("PLAN MODE")

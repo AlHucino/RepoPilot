@@ -1,13 +1,13 @@
 # Eval Report
 
-RepoTrace uses two eval layers.
+RepoPilot uses two eval layers.
 
 ## Local Deterministic Eval
 
 Command:
 
 ```bash
-uv run repotrace eval run --suite local
+uv run repopilot eval run --suite local
 ```
 
 Purpose:
@@ -34,7 +34,7 @@ The local suite includes eight deterministic cases:
 Command:
 
 ```bash
-uv run repotrace eval run --suite swebench-smoke
+uv run repopilot eval run --suite swebench-smoke
 ```
 
 Purpose:

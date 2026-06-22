@@ -34,7 +34,7 @@ jobs:
         run: uv sync --extra dev
 
       - name: Run focused test suite
-        run: uv run pytest -q tests/test_agentops tests/test_engine tests/test_permissions tests/test_services tests/test_ui
+        run: uv run pytest -q tests/test_runlog tests/test_engine tests/test_permissions tests/test_services tests/test_ui
 
   python-quality:
     name: Python quality
@@ -82,12 +82,12 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
-  agentops-dashboard:
-    name: AgentOps dashboard build
+  repopilot-dashboard:
+    name: RepoPilot dashboard build
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: agentops-dashboard
+        working-directory: repopilot-dashboard
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -97,7 +97,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: agentops-dashboard/package-lock.json
+          cache-dependency-path: repopilot-dashboard/package-lock.json
 
       - name: Install dashboard dependencies
         run: npm ci

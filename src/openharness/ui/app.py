@@ -54,7 +54,7 @@ async def run_repl(
     restore_tool_metadata: dict[str, object] | None = None,
     permission_mode: str | None = None,
 ) -> None:
-    """Run the default OpenHarness interactive application (React TUI)."""
+    """Run the default RepoPilot interactive application (React TUI)."""
     if backend_only:
         await run_backend_host(
             cwd=cwd,

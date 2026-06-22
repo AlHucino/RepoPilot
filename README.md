@@ -1,34 +1,36 @@
-# RepoTrace AgentOps
+# RepoPilot
 
-RepoTrace AgentOps is a local observability, permission-audit, and eval-scorecard layer for software-engineering agents.
+**AI Coding Agent for Repository Tasks**
 
-It turns an agent runtime from a live chat/tool loop into a system that can be inspected after the fact: every run gets a durable trace, every tool call can be audited, and deterministic eval suites can produce a scorecard without depending on an external LLM call.
+RepoPilot is a local coding-agent runtime for repository work: it can plan against a codebase, call tools, edit files, run checks, keep session context, and produce an inspectable execution record for each run.
 
-## Why This Project Exists
+The project is built for realistic software-engineering workflows rather than one-off chat demos. It focuses on the parts interviewers usually care about in agent systems: model-tool orchestration, permission boundaries, failure diagnosis, repeatable evaluation, and a dashboard that makes runs easy to review.
 
-Coding agents are hard to debug because failures are usually spread across model output, tool arguments, file-system effects, permission prompts, retries, context compaction, and final answers. RepoTrace focuses on the engineering layer around the model:
+## Highlights
 
-- persistent JSONL traces under `.repotrace/traces/`
-- permission decisions with risk categories
-- tool duration, error flags, and output previews
-- token usage and compact-event capture
-- deterministic local evals plus a lightweight SWE-bench smoke adapter
-- a static dashboard for trace timelines and eval scorecards
+- Tool-aware agent loop for repository tasks
+- Multi-provider model configuration
+- File, shell, search, web, MCP, task, and memory-oriented tools
+- Permission checks before risky tool execution
+- Durable run timeline under `.repopilot/traces/`
+- Trace export as JSON or Markdown
+- Deterministic local evals and SWE-bench smoke adapter
+- Static dashboard for run timeline, tool failures, permission audit, and scorecard review
 
 ## Quick Start
 
 ```bash
 uv sync --extra dev
-uv run repotrace eval run --suite local
-uv run repotrace trace list
-uv run repotrace trace show <run_id>
-uv run repotrace trace export <run_id>
+uv run repopilot eval run --suite local
+uv run repopilot trace list
+uv run repopilot trace show <run_id>
+uv run repopilot trace export <run_id>
 ```
 
 Dashboard:
 
 ```bash
-cd agentops-dashboard
+cd repopilot-dashboard
 npm ci
 npm run dev
 ```
@@ -36,36 +38,34 @@ npm run dev
 ## Core Commands
 
 ```bash
-repotrace trace list
-repotrace trace show <run_id>
-repotrace trace show <run_id> --raw
-repotrace trace export <run_id> --format markdown
-repotrace trace export <run_id> --format json
-repotrace eval run --suite local
-repotrace eval run --suite swebench-smoke
+repopilot trace list
+repopilot trace show <run_id>
+repopilot trace show <run_id> --raw
+repopilot trace export <run_id> --format markdown
+repopilot trace export <run_id> --format json
+repopilot eval run --suite local
+repopilot eval run --suite swebench-smoke
 ```
 
 ## Architecture
 
-RepoTrace keeps the original runtime event stream as the source of truth and adds a durable AgentOps layer:
+RepoPilot keeps the live runtime event stream as the source of truth and adds a durable run record:
 
 1. `QueryEngine` creates one `TraceRecorder` for each user run.
-2. Runtime stream events are appended to JSONL as assistant turns, tool starts, tool completions, errors, and compact events.
+2. Runtime events are appended as assistant turns, tool starts, tool completions, errors, and compact events.
 3. Tool execution records permission decisions and risk categories before side effects run.
-4. The trace store powers CLI summaries, Markdown exports, local eval scorecards, and the static dashboard.
+4. CLI summaries, Markdown exports, eval scorecards, and the dashboard read from the same trace store.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Eval Strategy
+## Evaluation
 
-The local eval suite is deterministic by design. It validates RepoTrace's own product surface: trace completeness, audit records, tool-failure visibility, compact-event continuity, and scorecard generation.
+The local eval suite is deterministic. It validates RepoPilot's engineering surface: trace completeness, audit records, tool-failure visibility, compact-event continuity, and scorecard generation.
 
-The SWE-bench smoke suite is intentionally lightweight. It records public-benchmark-shaped metadata so the project can explain compatibility with SWE-bench Lite/Verified without pretending that every demo run executes a full Docker-heavy benchmark solve.
+The SWE-bench smoke suite records public-benchmark-shaped metadata so the project can explain compatibility with SWE-bench Lite/Verified without pretending every demo run executes a full benchmark solve.
 
 See [docs/EVAL_REPORT.md](docs/EVAL_REPORT.md).
 
 ## Attribution
 
-RepoTrace AgentOps is a derivative work based on the MIT-licensed OpenHarness codebase. The new AgentOps trace store, eval scorecards, `repotrace` CLI, dashboard rewrite, and interview-oriented documentation are added in this fork.
-
-See [NOTICE.md](NOTICE.md).
+RepoPilot keeps upstream attribution in [NOTICE.md](NOTICE.md) and the license file while presenting RepoPilot as the public project identity.

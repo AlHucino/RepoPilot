@@ -5,9 +5,10 @@
 ```bash
 uv run repopilot eval run --suite local
 uv run repopilot trace list
+uv run repopilot dashboard snapshot
 ```
 
-The local eval writes trace files under `.repopilot/traces/` and a scorecard under `.repopilot/evals/`.
+The local eval writes trace files under `.repopilot/traces/` and a scorecard under `.repopilot/evals/`. The dashboard snapshot command converts those real artifacts into `repopilot-dashboard/public/snapshot.json`.
 
 ## Export A Run
 
@@ -22,7 +23,8 @@ The exported Markdown report summarizes request metadata, tool calls, permission
 ```bash
 cd repopilot-dashboard
 npm ci
+npm run snapshot
 npm run dev
 ```
 
-The dashboard consumes `snapshot.json` and renders run timeline, tool failures, permission audit counts, and eval scorecard metrics.
+The dashboard consumes the generated `snapshot.json` from `.repopilot` traces and renders run timeline, tool failures, permission audit counts, and eval scorecard metrics.

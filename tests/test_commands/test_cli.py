@@ -26,7 +26,7 @@ def test_cli_help():
     )
     plain_output = re.sub(r"\x1b\[[0-9;]*m", "", result.output)
     assert result.exit_code == 0
-    assert "Oh my Harness!" in plain_output
+    assert "RepoPilot" in plain_output
     assert "setup" in plain_output
     assert "--dry-run" in plain_output
 
@@ -283,7 +283,7 @@ def test_dry_run_uses_preview_builder_and_skips_repl(monkeypatch):
     assert result.exit_code == 0
     assert captured["prompt"] == "ship it"
     assert captured["model"] == "gpt-5.4"
-    assert "OpenHarness Dry Run" in result.output
+    assert "RepoPilot Dry Run" in result.output
     assert "ship it" in result.output
 
 

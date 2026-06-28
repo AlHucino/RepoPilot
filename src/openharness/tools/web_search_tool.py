@@ -47,7 +47,7 @@ class WebSearchTool(BaseTool):
             response = await fetch_public_http_response(
                 endpoint,
                 params={"q": arguments.query},
-                headers={"User-Agent": "OpenHarness/0.1"},
+                headers={"User-Agent": "RepoPilot/0.2"},
                 timeout=20.0,
             )
             response.raise_for_status()

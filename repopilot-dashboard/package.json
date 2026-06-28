@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "snapshot": "cd .. && uv run repopilot dashboard snapshot --output repopilot-dashboard/public/snapshot.json",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },

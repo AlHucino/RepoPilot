@@ -8,7 +8,7 @@ import pytest
 from pydantic import BaseModel
 
 from openharness.runlog.evals import run_eval_suite
-from openharness.runlog.trace import export_run_markdown, list_runs, load_run_events
+from openharness.runlog.trace import export_dashboard_snapshot, export_run_markdown, list_runs, load_run_events
 from openharness.api.client import ApiMessageCompleteEvent, ApiTextDeltaEvent
 from openharness.api.usage import UsageSnapshot
 from openharness.config.settings import PermissionSettings
@@ -131,3 +131,16 @@ def test_trace_markdown_export(tmp_path: Path) -> None:
     text = output.read_text(encoding="utf-8")
     assert "RepoPilot Run" in text
     assert "Scorecard" in text
+
+
+def test_dashboard_snapshot_exports_real_traces_and_scorecard(tmp_path: Path) -> None:
+    run_eval_suite(tmp_path, suite="local")
+
+    output = export_dashboard_snapshot(tmp_path, output_path=tmp_path / "snapshot.json")
+    payload = output.read_text(encoding="utf-8")
+
+    assert '"project_name":' in payload
+    assert '"suite": "local"' in payload
+    assert '"runs": [' in payload
+    assert '"risk_breakdown":' in payload
+    assert "readcode001" not in payload

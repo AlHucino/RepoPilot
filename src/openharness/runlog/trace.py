@@ -295,6 +295,163 @@ def list_runs(cwd: str | Path, *, limit: int = 20) -> list[dict[str, Any]]:
     return runs
 
 
+def _load_latest_scorecard(cwd: Path) -> dict[str, Any] | None:
+    eval_dir = cwd / TRACE_DIR_NAME / "evals"
+    if not eval_dir.exists():
+        return None
+    for path in sorted(eval_dir.glob("*-scorecard.json"), key=lambda item: item.stat().st_mtime, reverse=True):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(payload, dict):
+            return payload
+    return None
+
+
+def _scorecard_from_runs(cwd: Path, runs: list[dict[str, Any]]) -> dict[str, Any]:
+    total = len(runs)
+    completed = sum(1 for run in runs if run.get("status") == "completed")
+    tool_calls = sum(int(run.get("tool_count") or 0) for run in runs)
+    tool_errors = sum(int(run.get("tool_error_count") or 0) for run in runs)
+    permission_decisions = sum(int(run.get("permission_decision_count") or 0) for run in runs)
+    permission_blocks = sum(int(run.get("permission_block_count") or 0) for run in runs)
+    return {
+        "suite": "traces",
+        "generated_at": time.time(),
+        "cwd": str(cwd),
+        "total_cases": total,
+        "passed_cases": completed,
+        "pass_rate": round(completed / total, 4) if total else 0,
+        "tool_calls": tool_calls,
+        "tool_error_rate": round(tool_errors / tool_calls, 4) if tool_calls else 0,
+        "permission_decisions": permission_decisions,
+        "permission_blocks": permission_blocks,
+        "total_tokens": sum(int(run.get("total_tokens") or 0) for run in runs),
+        "runs": runs,
+    }
+
+
+def _dashboard_timeline(events: list[dict[str, Any]], *, limit: int = 30) -> list[dict[str, Any]]:
+    timeline: list[dict[str, Any]] = []
+    for event in events:
+        payload = event.get("payload") or {}
+        if not isinstance(payload, dict):
+            payload = {}
+        kind = str(event.get("kind") or "event")
+        elapsed_ms = float(event.get("elapsed_ms") or 0)
+        if kind == "run_started":
+            title = "Run started"
+            detail = str(payload.get("request_summary") or "")
+            severity = "info"
+        elif kind == "assistant_turn":
+            title = "Assistant turn"
+            detail = str(payload.get("text") or "")
+            severity = "info"
+        elif kind == "tool_started":
+            title = f"Tool started: {payload.get('tool_name') or 'unknown'}"
+            detail = ""
+            severity = "info"
+        elif kind == "tool_completed":
+            failed = bool(payload.get("is_error"))
+            title = f"Tool {'failed' if failed else 'completed'}: {payload.get('tool_name') or 'unknown'}"
+            detail = str(payload.get("output_preview") or "")
+            severity = "error" if failed else "success"
+        elif kind == "permission_decision":
+            allowed = bool(payload.get("allowed"))
+            risk = str(payload.get("risk") or "unknown")
+            title = f"Permission {'allowed' if allowed else 'blocked'}: {payload.get('tool_name') or 'unknown'}"
+            detail = f"{risk}: {payload.get('reason') or ''}".strip()
+            severity = "info" if allowed else "warning"
+        elif kind == "compact_event":
+            title = "Context compact event"
+            detail = f"{payload.get('trigger') or '-'} / {payload.get('phase') or '-'}"
+            severity = "info"
+        elif kind == "error":
+            title = "Runtime error"
+            detail = str(payload.get("message") or "")
+            severity = "error"
+        elif kind == "run_completed":
+            title = "Run completed"
+            detail = f"status={payload.get('status', 'unknown')}"
+            severity = "success" if payload.get("status") == "completed" else "warning"
+        else:
+            continue
+        timeline.append(
+            {
+                "elapsed_ms": elapsed_ms,
+                "kind": kind,
+                "title": _summarize(title, limit=120),
+                "detail": _summarize(detail, limit=260),
+                "severity": severity,
+            }
+        )
+    return timeline[-limit:]
+
+
+def export_dashboard_snapshot(
+    cwd: str | Path,
+    *,
+    output_path: str | Path | None = None,
+    limit: int = 50,
+) -> Path:
+    """Export real RepoPilot traces and scorecard data for the React dashboard."""
+    cwd_path = Path(cwd).resolve()
+    raw_runs = list_runs(cwd_path, limit=limit)
+    runs = [{key: value for key, value in run.items() if key != "path"} for run in raw_runs]
+    scorecard = dict(_load_latest_scorecard(cwd_path) or _scorecard_from_runs(cwd_path, runs))
+    scorecard["cwd"] = f"./{cwd_path.name}"
+    all_events: list[dict[str, Any]] = []
+    for run in raw_runs:
+        run_id = str(run.get("run_id") or "")
+        if not run_id:
+            continue
+        try:
+            all_events.extend(load_run_events(cwd_path, run_id))
+        except (OSError, json.JSONDecodeError):
+            continue
+
+    latest_events: list[dict[str, Any]] = []
+    if runs:
+        try:
+            latest_events = load_run_events(cwd_path, str(runs[0]["run_id"]))
+        except (OSError, json.JSONDecodeError, KeyError):
+            latest_events = []
+
+    risk_breakdown: dict[str, int] = {}
+    for event in all_events:
+        if event.get("kind") != "permission_decision":
+            continue
+        payload = event.get("payload") or {}
+        if not isinstance(payload, dict):
+            continue
+        risk = str(payload.get("risk") or "unknown")
+        risk_breakdown[risk] = risk_breakdown.get(risk, 0) + 1
+
+    snapshot = {
+        "generated_at": time.time(),
+        "project_name": cwd_path.name or "RepoPilot",
+        "repo_path": f"./{cwd_path.name}",
+        "headline": (
+            f"{len(runs)} trace run(s) loaded from .repopilot with "
+            f"{int(scorecard.get('tool_calls') or 0)} tool calls and "
+            f"{int(scorecard.get('permission_decisions') or 0)} permission decisions."
+        ),
+        "scorecard": scorecard,
+        "runs": runs,
+        "timeline": _dashboard_timeline(latest_events),
+        "risk_breakdown": dict(sorted(risk_breakdown.items())),
+    }
+    output = (
+        Path(output_path).expanduser().resolve()
+        if output_path is not None
+        else cwd_path / "repopilot-dashboard" / "public" / "snapshot.json"
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    atomic_write_text(output, json.dumps(snapshot, indent=2, ensure_ascii=False) + "\n")
+    return output
+
+
 def summarize_events(events: list[dict[str, Any]]) -> dict[str, Any]:
     """Build a compact scorecard from trace events."""
     if not events:

@@ -1,7 +1,7 @@
 ---
 name: skill-creator
 description: >
-  Create, improve, and verify OpenHarness skills. Use this whenever the user
+  Create, improve, and verify RepoPilot skills. Use this whenever the user
   asks to create a new skill, convert a workflow into a skill, update an
   existing SKILL.md, add skills for oh/ohmo, design skill trigger behavior,
   or test whether a skill loads and works correctly.
@@ -9,7 +9,7 @@ description: >
 
 # skill-creator
 
-Create or improve OpenHarness skills in the directory-based `SKILL.md` format.
+Create or improve RepoPilot skills in the directory-based `SKILL.md` format.
 
 ## When to use
 
@@ -22,16 +22,16 @@ Use this skill when the user wants to:
 - debug why the `skill` tool cannot find or load a skill
 - test trigger wording, skill metadata, or skill behavior
 
-## OpenHarness skill locations
+## RepoPilot skill locations
 
 Choose the target deliberately:
 
-- Built-in OpenHarness skills live in `src/openharness/skills/bundled/content/*.md`.
-- User skills for `oh` live in `~/.openharness/skills/<skill-dir>/SKILL.md`.
+- Built-in RepoPilot skills currently live in `src/openharness/skills/bundled/content/*.md`.
+- User skills for the compatible runtime live in `~/.openharness/skills/<skill-dir>/SKILL.md`.
 - Private `ohmo` skills live in `~/.ohmo/skills/<skill-dir>/SKILL.md`.
 - Plugin skills live in `<plugin-root>/skills/<skill-dir>/SKILL.md`.
 
-OpenHarness user and plugin skills use a directory layout. Do not create flat
+RepoPilot user and plugin skills use a directory layout. Do not create flat
 `*.md` user skills under `skills/`; they will not be loaded by the normal loader.
 
 ## Skill anatomy
@@ -82,7 +82,7 @@ Important boundaries, verification, and failure handling.
 
 2. Inspect existing examples.
    Read nearby skills and loader behavior before choosing a layout. For
-   OpenHarness, confirm whether the target is bundled, user, ohmo-private, or
+   RepoPilot, confirm whether the target is bundled, user, ohmo-private, or
    plugin-provided.
 
 3. Write the metadata first.

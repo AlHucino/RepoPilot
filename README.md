@@ -25,6 +25,7 @@ uv run repopilot eval run --suite local
 uv run repopilot trace list
 uv run repopilot trace show <run_id>
 uv run repopilot trace export <run_id>
+uv run repopilot dashboard snapshot
 ```
 
 Dashboard:
@@ -32,6 +33,7 @@ Dashboard:
 ```bash
 cd repopilot-dashboard
 npm ci
+npm run snapshot
 npm run dev
 ```
 
@@ -45,6 +47,7 @@ repopilot trace export <run_id> --format markdown
 repopilot trace export <run_id> --format json
 repopilot eval run --suite local
 repopilot eval run --suite swebench-smoke
+repopilot dashboard snapshot
 ```
 
 ## Architecture
@@ -54,7 +57,8 @@ RepoPilot keeps the live runtime event stream as the source of truth and adds a 
 1. `QueryEngine` creates one `TraceRecorder` for each user run.
 2. Runtime events are appended as assistant turns, tool starts, tool completions, errors, and compact events.
 3. Tool execution records permission decisions and risk categories before side effects run.
-4. CLI summaries, Markdown exports, eval scorecards, and the dashboard read from the same trace store.
+4. `repopilot dashboard snapshot` exports those real traces and the latest scorecard to `repopilot-dashboard/public/snapshot.json`.
+5. CLI summaries, Markdown exports, eval scorecards, and the dashboard read from the same trace store.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

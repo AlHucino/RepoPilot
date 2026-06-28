@@ -96,7 +96,7 @@ def migrate_memory(
 def main(argv: list[str] | None = None) -> int:
     """Command-line entrypoint for one-off memory migrations."""
 
-    parser = argparse.ArgumentParser(description="Backfill OpenHarness memory schema metadata.")
+    parser = argparse.ArgumentParser(description="Backfill RepoPilot memory schema metadata.")
     parser.add_argument("--cwd", default=".", help="Project cwd whose memory store should be migrated.")
     parser.add_argument("--memory-dir", default=None, help="Explicit memory directory to migrate.")
     parser.add_argument("--default-type", default="project", help="Type for legacy files without one.")

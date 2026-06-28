@@ -24,7 +24,7 @@ def test_load_skill_registry_includes_bundled(tmp_path: Path, monkeypatch):
     skill_creator = registry.get("skill-creator")
     assert skill_creator is not None
     assert skill_creator.source == "bundled"
-    assert "Create, improve, and verify OpenHarness skills" in skill_creator.description
+    assert "Create, improve, and verify RepoPilot skills" in skill_creator.description
 
 
 def _write_skill(root: Path, name: str, body: str | None = None) -> Path:

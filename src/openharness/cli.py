@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 
 import typer
 
-__version__ = "0.1.9"
+__version__ = "0.2.0"
 
 _PREVIEW_STOPWORDS = {
     "a",
@@ -379,7 +379,7 @@ def _evaluate_dry_run_readiness(
         elif entrypoint.get("kind") == "model_prompt":
             next_actions.append("You can run this prompt directly with `oh -p '...'` or open the interactive UI with `oh`.")
         else:
-            next_actions.append("You can run OpenHarness normally with the current configuration.")
+            next_actions.append("You can run RepoPilot normally with the current configuration.")
 
     deduped_actions: list[str] = []
     seen_actions: set[str] = set()
@@ -531,7 +531,7 @@ def _build_dry_run_preview(
     else:
         entrypoint = {
             "kind": "interactive_session",
-            "detail": "OpenHarness would start and wait for user input. No model or tool call happens until you submit one.",
+            "detail": "RepoPilot would start and wait for user input. No model or tool call happens until you submit one.",
         }
 
     preview = {
@@ -610,7 +610,7 @@ def _format_dry_run_preview(preview: dict[str, object]) -> str:
     mcp_servers = preview.get("mcp_servers") if isinstance(preview.get("mcp_servers"), list) else []
 
     lines = [
-        "OpenHarness Dry Run",
+        "RepoPilot Dry Run",
         "",
         "Readiness",
         f"- level: {readiness.get('level', 'unknown')}",
@@ -744,14 +744,14 @@ def _format_dry_run_preview(preview: dict[str, object]) -> str:
 
 def _version_callback(value: bool) -> None:
     if value:
-        print(f"openharness {__version__}")
+        print(f"repopilot {__version__}")
         raise typer.Exit()
 
 
 app = typer.Typer(
-    name="openharness",
+    name="repopilot",
     help=(
-        "Oh my Harness! An AI-powered coding assistant.\n\n"
+        "RepoPilot: an AI coding agent for repository tasks.\n\n"
         "Starts an interactive session by default, use -p/--print for non-interactive output."
     ),
     add_completion=False,
@@ -1950,13 +1950,13 @@ def auth_copilot_login() -> None:
 
 @auth_app.command("codex-login")
 def auth_codex_login() -> None:
-    """Bind OpenHarness to a local Codex CLI subscription session."""
+    """Bind RepoPilot to a local Codex CLI subscription session."""
     _bind_external_provider("openai_codex")
 
 
 @auth_app.command("claude-login")
 def auth_claude_login() -> None:
-    """Bind OpenHarness to a local Claude CLI subscription session."""
+    """Bind RepoPilot to a local Claude CLI subscription session."""
     _bind_external_provider("anthropic_claude")
 
 
@@ -2016,7 +2016,7 @@ def config_set(
     key: str = typer.Argument(..., help="Setting key, including dotted nested keys"),
     value: str = typer.Argument(..., help="Value to store"),
 ) -> None:
-    """Persist one setting in ~/.openharness/settings.json."""
+    """Persist one setting in the RepoPilot compatibility settings store."""
     from openharness.config.settings import load_settings, save_settings
 
     settings = load_settings()

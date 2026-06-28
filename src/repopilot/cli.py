@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 import json
+import importlib.metadata
 from pathlib import Path
 from typing import Literal
 
 import typer
 
 from openharness.runlog.evals import run_eval_suite
-from openharness.runlog.trace import export_run_markdown, list_runs, load_run_events, summarize_run
+from openharness.runlog.trace import (
+    export_dashboard_snapshot,
+    export_run_markdown,
+    list_runs,
+    load_run_events,
+    summarize_run,
+)
 
 app = typer.Typer(
     help="RepoPilot: run repository-task agents, inspect traces, and run evals.",
@@ -17,17 +24,42 @@ app = typer.Typer(
 )
 trace_app = typer.Typer(help="Inspect persistent run timelines.", no_args_is_help=True)
 eval_app = typer.Typer(help="Run deterministic RepoPilot eval suites.", no_args_is_help=True)
+dashboard_app = typer.Typer(help="Export dashboard-ready RepoPilot data.", no_args_is_help=True)
 app.add_typer(trace_app, name="trace")
 app.add_typer(eval_app, name="eval")
+app.add_typer(dashboard_app, name="dashboard")
 
 
 def _cwd(value: str | None) -> Path:
     return Path(value or ".").expanduser().resolve()
 
 
+def _version() -> str:
+    try:
+        return importlib.metadata.version("repopilot-agent")
+    except importlib.metadata.PackageNotFoundError:
+        return "0.2.0"
+
+
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"repopilot {_version()}")
+        raise typer.Exit()
+
+
 @app.callback()
-def main() -> None:
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        help="Show RepoPilot version and exit.",
+        callback=_version_callback,
+        is_eager=True,
+    ),
+) -> None:
     """RepoPilot command group."""
+    del version
 
 
 @trace_app.command("list")
@@ -94,6 +126,21 @@ def eval_run(
     """Run an eval suite and emit a scorecard."""
     scorecard = run_eval_suite(_cwd(cwd), suite=suite)
     typer.echo(json.dumps(scorecard, indent=2, ensure_ascii=False))
+
+
+@dashboard_app.command("snapshot")
+def dashboard_snapshot(
+    cwd: str | None = typer.Option(None, "--cwd", help="Project directory. Defaults to current directory."),
+    output: str | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output path. Defaults to repopilot-dashboard/public/snapshot.json.",
+    ),
+    limit: int = typer.Option(50, "--limit", min=1, max=500, help="Maximum trace runs to include."),
+) -> None:
+    """Export real .repopilot traces and scorecard as dashboard snapshot.json."""
+    typer.echo(str(export_dashboard_snapshot(_cwd(cwd), output_path=output, limit=limit)))
 
 
 if __name__ == "__main__":

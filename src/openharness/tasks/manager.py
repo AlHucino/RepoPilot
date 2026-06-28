@@ -17,7 +17,7 @@ from openharness.tasks.types import TaskRecord, TaskStatus, TaskType
 from openharness.utils.shell import create_shell_subprocess
 
 log = logging.getLogger(__name__)
-_TASK_RESTART_NOTICE = "[OpenHarness] Agent task restarted; prior interactive context was not preserved.\n"
+_TASK_RESTART_NOTICE = "[RepoPilot] Agent task restarted; prior interactive context was not preserved.\n"
 
 
 def _encode_task_worker_payload(data: str) -> bytes:
